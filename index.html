@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  /* स्क्रीन को दो भागों में बांटना */
+  .app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* फिक्स्ड कीबोर्ड (बायां हिस्सा) */
+  .left-keyboard {
+    width: 35%;
+    background-color: #4CAF50; /* हरा बैकग्राउंड जैसा इमेज में है */
+    padding: 10px;
+    overflow-y: auto;
+    border-right: 3px solid #f1f1f1;
+  }
+
+  /* स्क्रॉलिंग एरिया (दायां हिस्सा) */
+  .right-scroll-area {
+    width: 65%;
+    padding: 15px;
+    overflow-y: scroll;
+    background-color: #FFFDE7;
+  }
+
+  /* मात्रा कार्ड स्टाइल */
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+
+  .main-char { font-size: 40px; color: black; }
+  .red-matra { font-size: 40px; color: red; }
+  .phonetic { display: block; color: #666; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="left-keyboard">
+    <button onclick="changeLetter('क', 'k')">क <br>ka</button>
+    <button onclick="changeLetter('ख', 'kh')">ख <br>kha</button>
+    </div>
+
+  <div class="right-scroll-area">
+    <div class="card">
+      <div id="display-aa"><span class="main-char">क</span><span class="red-matra">ा</span></div>
+      <span class="phonetic" id="eng-aa">ka</span>
+    </div>
+    <div class="card">
+      <div id="display-i"><span class="red-matra">ि</span><span class="main-char">क</span></div>
+      <span class="phonetic" id="eng-i">ki</span>
+    </div>
+    </div>
+</div>
+
+<script>
+  function changeLetter(hindi, eng) {
+    // यहाँ जावास्क्रिप्ट लॉजिक सभी कार्ड्स को अपडेट कर देगा
+  }
+</script>
+
+</body>
+</html>
