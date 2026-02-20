@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    /* स्क्रीन को दो भागों में बांटना */
+    .app-container {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* फिक्स्ड कीबोर्ड (बायां हिस्सा) */
+    .left-keyboard {
+      width: 35%;
+      background: linear-gradient(135deg, #43a047, #2e7d32); /* गहरा हरा ग्रेडिएंट */
+      padding: 20px;
+      overflow-y: auto;
+      border-right: 5px solid #ffd54f;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+    }
+
+    .left-keyboard h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      border-bottom: 3px solid #ffd54f;
+      padding-bottom: 10px;
+    }
+
+    .keyboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .keyboard-btn {
+      width: 100%;
+      padding: 20px 10px;
+      font-size: 28px;
+      font-weight: bold;
+      background: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #f57f17, 0 8px 12px rgba(0,0,0,0.3);
+      transition: all 0.1s ease;
+      color: #2e7d32;
+      line-height: 1.2;
+    }
+
+    .keyboard-btn small {
+      display: block;
+      font-size: 16px;
+      color: #666;
+      font-weight: normal;
+    }
+
+    .keyboard-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #f57f17, 0 10px 14px rgba(0,0,0,0.3);
+    }
+
+    .keyboard-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #f57f17, 0 5px 8px rgba(0,0,0,0.2);
+    }
+
+    /* स्क्रॉलिंग एरिया (दायां हिस्सा) */
+    .right-scroll-area {
+      width: 65%;
+      padding: 25px;
+      overflow-y: scroll;
+      background: linear-gradient(135deg, #fff9c4, #fffde7);
+    }
+
+    .right-header {
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .right-header h1 {
+      color: #2e7d32;
+      font-size: 32px;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 0 #ffd54f;
+    }
+
+    .right-header p {
+      color: #f57f17;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* मात्रा कार्ड स्टाइल */
+    .card {
+      background: white;
+      border-radius: 30px;
+      padding: 25px;
+      box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2), 0 6px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      border: 3px solid #ffd54f;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(46, 125, 50, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      background: #f1f8e9;
+      padding: 10px;
+      border-radius: 50px;
+    }
+
+    .matra-symbol {
+      font-size: 36px;
+      color: #f57f17;
+      font-weight: bold;
+    }
+
+    .matra-name {
+      font-size: 24px;
+      color: #2e7d32;
+    }
+
+    .display-area {
+      font-size: 70px;
+      margin: 20px 0;
+      padding: 20px;
+      background: #fff9c4;
+      border-radius: 40px;
+      border: 3px dashed #f57f17;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-char { 
+      font-size: 70px; 
+      color: black; 
+      font-weight: bold;
+      text-shadow: 3px 3px 0 #ffd54f;
+    }
+
+    .red-matra { 
+      font-size: 70px; 
+      color: #d32f2f; 
+      font-weight: bold;
+      text-shadow: 2px 2px 0 #ffcdd2;
+    }
+
+    .phonetic { 
+      display: block; 
+      color: #f57f17; 
+      font-size: 24px; 
+      font-weight: bold;
+      background: #fff9c4;
+      padding: 12px;
+      border-radius: 40px;
+      border: 2px solid #ffd54f;
+    }
+
+    .example-word {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #2e7d32;
+      font-style: italic;
+    }
+
+    /* स्क्रॉलबार कस्टमाइज़ */
+    .right-scroll-area::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    .right-scroll-area::-webkit-scrollbar-track {
+      background: #fff9c4;
+    }
+
+    .right-scroll-area::-webkit-scrollbar-thumb {
+      background: #2e7d32;
+      border-radius: 6px;
+      border: 3px solid #ffd54f;
+    }
+
+    .right-scroll-area::-webkit-scrollbar-thumb:hover {
+      background: #43a047;
+    }
+
+    .active-indicator {
+      background: #ffd54f;
+      color: #2e7d32;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- बायां हिस्सा - कीबोर्ड -->
+  <div class="left-keyboard">
+    <h2>🌟 अक्षर चुनो 🌟</h2>
+    <div class="keyboard-grid">
+      <button class="keyboard-btn" onclick="changeLetter('क', 'k')">क <small>ka</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ख', 'kh')">ख <small>kha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ग', 'g')">ग <small>ga</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('घ', 'gh')">घ <small>gha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ङ', 'ng')">ङ <small>nga</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('च', 'ch')">च <small>cha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('छ', 'chh')">छ <small>chha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ज', 'j')">ज <small>ja</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('झ', 'jh')">झ <small>jha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ञ', 'ny')">ञ <small>nya</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ट', 't')">ट <small>ta</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ठ', 'th')">ठ <small>tha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ड', 'd')">ड <small>da</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ढ', 'dh')">ढ <small>dha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ण', 'n')">ण <small>na</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('त', 't')">त <small>ta</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('थ', 'th')">थ <small>tha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('द', 'd')">द <small>da</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ध', 'dh')">ध <small>dha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('न', 'n')">न <small>na</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('प', 'p')">प <small>pa</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('फ', 'ph')">फ <small>pha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ब', 'b')">ब <small>ba</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('भ', 'bh')">भ <small>bha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('म', 'm')">म <small>ma</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('य', 'y')">य <small>ya</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('र', 'r')">र <small>ra</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ल', 'l')">ल <small>la</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('व', 'v')">व <small>va</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('श', 'sh')">श <small>sha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ष', 'sh')">ष <small>sha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('स', 's')">स <small>sa</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ह', 'h')">ह <small>ha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('क्ष', 'ksh')">क्ष <small>ksha</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('त्र', 'tr')">त्र <small>tra</small></button>
+      <button class="keyboard-btn" onclick="changeLetter('ज्ञ', 'gy')">ज्ञ <small>gya</small></button>
+    </div>
+    <div class="active-indicator" id="activeLetter">चुना हुआ अक्षर: क (ka)</div>
+  </div>
+
+  <!-- दायां हिस्सा - स्क्रॉल करने वाला एरिया -->
+  <div class="right-scroll-area">
+    <div class="right-header">
+      <h1>🎯 मात्राओं का खेल 🎯</h1>
+      <p>बाईं तरफ अक्षर चुनो और जादू देखो!</p>
+    </div>
+
+    <div class="cards-container">
+      <!-- आ (ा) का कार्ड -->
+      <div class="card" id="card-aa">
+        <div class="card-header">
+          <span class="matra-symbol">ा</span>
+          <span class="matra-name">आ की मात्रा (aa)</span>
+        </div>
+        <div class="display-area" id="display-aa">
+          <span class="main-char" id="char-aa">क</span>
+          <span class="red-matra">ा</span>
+        </div>
+        <span class="phonetic" id="eng-aa">kaa</span>
+        <div class="example-word" id="example-aa">जैसे: का (kaa)</div>
+      </div>
+
+      <!-- इ (ि) का कार्ड - मात्रा पहले आती है -->
+      <div class="card" id="card-i">
+        <div class="card-header">
+          <span class="matra-symbol">ि</span>
+          <span class="matra-name">इ की मात्रा (i)</span>
+        </div>
+        <div class="display-area" id="display-i">
+          <span class="red-matra">ि</span>
+          <span class="main-char" id="char-i">क</span>
+        </div>
+        <span class="phonetic" id="eng-i">ki</span>
+        <div class="example-word" id="example-i">जैसे: कि (ki)</div>
+      </div>
+
+      <!-- ई (ी) का कार्ड -->
+      <div class="card" id="card-ee">
+        <div class="card-header">
+          <span class="matra-symbol">ी</span>
+          <span class="matra-name">ई की मात्रा (ee)</span>
+        </div>
+        <div class="display-area" id="display-ee">
+          <span class="main-char" id="char-ee">क</span>
+          <span class="red-matra">ी</span>
+        </div>
+        <span class="phonetic" id="eng-ee">kee</span>
+        <div class="example-word" id="example-ee">जैसे: की (kee)</div>
+      </div>
+
+      <!-- उ (ु) का कार्ड -->
+      <div class="card" id="card-u">
+        <div class="card-header">
+          <span class="matra-symbol">ु</span>
+          <span class="matra-name">उ की मात्रा (u)</span>
+        </div>
+        <div class="display-area" id="display-u">
+          <span class="main-char" id="char-u">क</span>
+          <span class="red-matra">ु</span>
+        </div>
+        <span class="phonetic" id="eng-u">ku</span>
+        <div class="example-word" id="example-u">जैसे: कु (ku)</div>
+      </div>
+
+      <!-- ऊ (ू) का कार्ड -->
+      <div class="card" id="card-oo">
+        <div class="card-header">
+          <span class="matra-symbol">ू</span>
+          <span class="matra-name">ऊ की मात्रा (oo)</span>
+        </div>
+        <div class="display-area" id="display-oo">
+          <span class="main-char" id="char-oo">क</span>
+          <span class="red-matra">ू</span>
+        </div>
+        <span class="phonetic" id="eng-oo">koo</span>
+        <div class="example-word" id="example-oo">जैसे: कू (koo)</div>
+      </div>
+
+      <!-- ए (े) का कार्ड -->
+      <div class="card" id="card-e">
+        <div class="card-header">
+          <span class="matra-symbol">े</span>
+          <span class="matra-name">ए की मात्रा (e)</span>
+        </div>
+        <div class="display-area" id="display-e">
+          <span class="main-char" id="char-e">क</span>
+          <span class="red-matra">े</span>
+        </div>
+        <span class="phonetic" id="eng-e">ke</span>
+        <div class="example-word" id="example-e">जैसे: के (ke)</div>
+      </div>
+
+      <!-- ऐ (ै) का कार्ड -->
+      <div class="card" id="card-ai">
+        <div class="card-header">
+          <span class="matra-symbol">ै</span>
+          <span class="matra-name">ऐ की मात्रा (ai)</span>
+        </div>
+        <div class="display-area" id="display-ai">
+          <span class="main-char" id="char-ai">क</span>
+          <span class="red-matra">ै</span>
+        </div>
+        <span class="phonetic" id="eng-ai">kai</span>
+        <div class="example-word" id="example-ai">जैसे: कै (kai)</div>
+      </div>
+
+      <!-- ओ (ो) का कार्ड -->
+      <div class="card" id="card-o">
+        <div class="card-header">
+          <span class="matra-symbol">ो</span>
+          <span class="matra-name">ओ की मात्रा (o)</span>
+        </div>
+        <div class="display-area" id="display-o">
+          <span class="main-char" id="char-o">क</span>
+          <span class="red-matra">ो</span>
+        </div>
+        <span class="phonetic" id="eng-o">ko</span>
+        <div class="example-word" id="example-o">जैसे: को (ko)</div>
+      </div>
+
+      <!-- औ (ौ) का कार्ड -->
+      <div class="card" id="card-au">
+        <div class="card-header">
+          <span class="matra-symbol">ौ</span>
+          <span class="matra-name">औ की मात्रा (au)</span>
+        </div>
+        <div class="display-area" id="display-au">
+          <span class="main-char" id="char-au">क</span>
+          <span class="red-matra">ौ</span>
+        </div>
+        <span class="phonetic" id="eng-au">kau</span>
+        <div class="example-word" id="example-au">जैसे: कौ (kau)</div>
+      </div>
+
+      <!-- अं (ं) का कार्ड -->
+      <div class="card" id="card-an">
+        <div class="card-header">
+          <span class="matra-symbol">ं</span>
+          <span class="matra-name">अनुस्वार (n)</span>
+        </div>
+        <div class="display-area" id="display-an">
+          <span class="main-char" id="char-an">क</span>
+          <span class="red-matra">ं</span>
+        </div>
+        <span class="phonetic" id="eng-an">kan</span>
+        <div class="example-word" id="example-an">जैसे: कं (kan)</div>
+      </div>
+
+      <!-- अः (ः) का कार्ड -->
+      <div class="card" id="card-ah">
+        <div class="card-header">
+          <span class="matra-symbol">ः</span>
+          <span class="matra-name">विसर्ग (h)</span>
+        </div>
+        <div class="display-area" id="display-ah">
+          <span class="main-char" id="char-ah">क</span>
+          <span class="red-matra">ः</span>
+        </div>
+        <span class="phonetic" id="eng-ah">kah</span>
+        <div class="example-word" id="example-ah">जैसे: कः (kah)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // वेरिएबल्स जो वर्तमान अक्षर और उसके उच्चारण को स्टोर करेंगे
+  let currentHindi = 'क';
+  let currentEng = 'k';
+
+  function changeLetter(hindi, eng) {
+    // वर्तमान अक्षर अपडेट करें
+    currentHindi = hindi;
+    currentEng = eng;
+
+    // सभी कार्ड्स में अक्षर बदलें
+    updateCard('aa', 'ा', 'aa');
+    updateCard('i', 'ि', 'i', true); // true का मतलब मात्रा पहले आएगी
+    updateCard('ee', 'ी', 'ee');
+    updateCard('u', 'ु', 'u');
+    updateCard('oo', 'ू', 'oo');
+    updateCard('e', 'े', 'e');
+    updateCard('ai', 'ै', 'ai');
+    updateCard('o', 'ो', 'o');
+    updateCard('au', 'ौ', 'au');
+    updateCard('an', 'ं', 'n');
+    updateCard('ah', 'ः', 'h');
+
+    // एक्टिव इंडिकेटर अपडेट करें
+    document.getElementById('activeLetter').innerHTML = `चुना हुआ अक्षर: ${hindi} (${eng})`;
+
+    // एनिमेशन इफेक्ट
+    animateCards();
+  }
+
+  function updateCard(cardId, matra, engMatra, matraFirst = false) {
+    // डिस्प्ले एरिया अपडेट करें
+    const displayArea = document.getElementById(`display-${cardId}`);
+    const phonetic = document.getElementById(`eng-${cardId}`);
+    const example = document.getElementById(`example-${cardId}`);
+    
+    // अक्षर और मात्रा के पोजीशन के हिसाब से HTML बनाएं
+    if (matraFirst) {
+      // मात्रा पहले (जैसे 'ि' के लिए)
+      displayArea.innerHTML = `<span class="red-matra">${matra}</span><span class="main-char">${currentHindi}</span>`;
+    } else {
+      // अक्षर पहले, मात्रा बाद में
+      displayArea.innerHTML = `<span class="main-char">${currentHindi}</span><span class="red-matra">${matra}</span>`;
+    }
+
+    // उच्चारण अपडेट करें
+    phonetic.textContent = currentEng + engMatra;
+    
+    // उदाहरण अपडेट करें
+    example.textContent = `जैसे: ${currentHindi}${!matraFirst ? matra : ''} (${currentEng}${engMatra})`;
+    
+    // स्पेशल केस: 'ि' के लिए उदाहरण अलग होगा
+    if (matraFirst) {
+      example.textContent = `जैसे: ${matra}${currentHindi} (${currentEng}${engMatra})`;
+    }
+  }
+
+  function animateCards() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+      card.style.animation = 'none';
+      card.offsetHeight; // रीफ्लो ट्रिगर करें
+      card.style.animation = `slideIn 0.3s ease ${index * 0.05}s`;
+    });
+  }
+
+  // एनिमेशन की डेफिनिशन
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      0% { transform: translateX(20px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // पेज लोड होने पर डिफॉल्ट अक्षर से शुरू करें
+  window.onload = function() {
+    changeLetter('क', 'k');
+  };
+</script>
+
+</body>
+</html>
